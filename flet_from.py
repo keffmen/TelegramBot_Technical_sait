@@ -1,4 +1,4 @@
-import flet
+import flet as ft
 from flet import (
     Checkbox,
     Column,
@@ -158,5 +158,5 @@ def main(page: Page):
     page.add(app)
 
 
-flet.app(target=main, assets_dir='assets')
+ft.app(target=main, view=ft.AppView.WEB_BROWSER, assets_dir='assets')
 
