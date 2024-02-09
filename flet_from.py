@@ -26,6 +26,11 @@ def main(page: Page):
     page.bgcolor = fm.Theme.bgcolor
     page.fonts = {'OpenSansCondensed-Bold': 'fonts/OpenSansCondensed-Bold.ttf'}
     page.theme = ft.Theme(font_family='OpenSansCondensed-Bold')
+
+    # Убрать , не работает в web
+    page.window_height = 1280
+    page.window_width = 720
+
     page.update()
 
     # Форма
@@ -34,92 +39,101 @@ def main(page: Page):
     # Название Организации
     Name_Organization = ft.TextField(label='Название Организации',
                                      border_color='#fefff9',
-                                     dense=True)
+                                     dense=True,
+                                     icon=ft.icons.STORE)
+    # Имя пользователя
+    Name_User = ft.TextField(label='Имя',
+                             border_color='#fefff9',
+                             dense=True,
+                             icon=ft.icons.ACCOUNT_CIRCLE)
+
     # Номер Телефона
     Nomber = ft.TextField(label='Номер телефона',
                           border_color='#fefff9',
                           dense=True,
                           keyboard_type=ft.KeyboardType.PHONE,
-                          input_filter=ft.NumbersOnlyInputFilter(),
                           prefix_text='8 ',
-                          max_length=10)
+                          max_length=10,
+                          icon=ft.icons.PHONE)
+
+    # Суть проблемы
+    Problem = ft.TextField(label='Суть проблемы',
+                           border_color='#fefff9',
+                           dense=True,
+                           multiline=True,
+                           icon=ft.icons.REPORT_PROBLEM)
+
     form = ft.Column(
         controls=[
             ft.Container(
                 content=headline,
-                padding=10,
-                margin=5,
+                padding=20
             ),
             ft.Container(
                 content=Name_Organization,
-                padding=10,
+                padding=3,
+                margin=5,
+            ),
+            ft.Container(
+                content=Name_User,
+                padding=3,
                 margin=5,
             ),
             ft.Container(
                 content=Nomber,
-                padding=10,
+                padding=3,
+                margin=5,
+            ),
+            ft.Container(
+                content=Problem,
+                padding=3,
                 margin=5,
             )
         ]
     )
 
-
-    # Название Организации
-    Name_Organization = ft.TextField(label='Название Организации',
-                                     border_color='#fefff9',
-                                     dense=True)
-
-
-
-
-    prog_bars: Dict[str, ProgressRing] = {}
-    files = Ref[Column]()
-    upload_button = Ref[ElevatedButton]()
-
-    def file_picker_result(e: FilePickerResultEvent):
-        upload_button.current.disabled = True if e.files is None else False
-        prog_bars.clear()
-        files.current.controls.clear()
-        if e.files is not None:
-            for f in e.files:
-                prog = ProgressRing(value=0, bgcolor="#eeeeee", width=20, height=20)
-                prog_bars[f.name] = prog
-                files.current.controls.append(Row([prog, Text(f.name)]))
-        page.update()
-
-    def on_upload_progress(e: FilePickerUploadEvent):
-        prog_bars[e.file_name].value = e.progress
-        prog_bars[e.file_name].update()
-
-    file_picker = FilePicker(on_result=file_picker_result, on_upload=on_upload_progress)
+    def pick_files_result(e: ft.FilePickerResultEvent):
+        selected_files.value = (
+            ", \n".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+        )
+        selected_files.update()
 
     def upload_files(e):
-        uf = []
-        if file_picker.result is not None and file_picker.result.files is not None:
+        upload_list = []
+        if file_picker.result != None and file_picker.result.files != None:
             for f in file_picker.result.files:
-                uf.append(
+                upload_list.append(
                     FilePickerUploadFile(
                         f.name,
                         upload_url=page.get_upload_url(f.name, 600),
                     )
                 )
-            file_picker.upload(uf)
+            file_picker.upload(upload_list)
 
-    # hide dialog in a overlay
+    # Загрузка файлов
+    file_picker = ft.FilePicker(on_result=pick_files_result)
+    selected_files = ft.Text()
+
     page.overlay.append(file_picker)
+
+
     # Добавление всех элементов на страницу
     page.add(
         form,
-        Row(
-            [ElevatedButton(
-                "Select files...",
-                icon=icons.FOLDER_OPEN,
-                on_click=lambda _: file_picker.pick_files(allow_multiple=True)
-            ),
-            Column(
-                ref=files
-            )]
-        ),
+        Row([
+            selected_files,
+            ft.ElevatedButton(
+                "Загрузить фото...",
+                icon=ft.icons.UPLOAD_FILE,
+                on_click=lambda _: file_picker.pick_files(
+                    allow_multiple=True,
+                    file_type=ft.FilePickerFileType.IMAGE
+                ),
+            )
+        ],
+            alignment=ft.MainAxisAlignment.END),
+
+
     )
 
 
