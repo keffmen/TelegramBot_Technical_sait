@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Заявка</title>
 </head>
@@ -12,12 +13,12 @@
             <h1 class="title">Заявка на Техническое обслуживание</h1>
             <img src="assets/icons/cha-bubble-female-svgrepo-com.svg" class="svg_title" >
         </div>
-        <form action="#" method="post" target="_blank">
+        <form method="post" target="_blank">
             <fieldset>
                 <div class="text-line">
                     <img src="assets/icons/shop-1-svgrepo-com.svg" class="svg_store" height="45">
                     <div class="text-field text-field_floating">
-                        <input class="text-field__input" type="email" id="email" placeholder="alexander@itchief.ru">
+                        <input class="text-field__input" type="text" id="org" placeholder="alexander@itchief.ru">
                         <label class="text-field__label" for="email">Организация</label>
                     </div>
                 </div>
@@ -43,15 +44,16 @@
                     </div>
                 </div>
                 <div class="text-line">
-                    <img src="assets/icons/question-square-svgrepo-com.svg" class="svg_question" height="45">
-                    <input type="file" accept="image/jpeg,image/png">
-                    </div>
+                    <img src="assets/icons/photo-add-svgrepo-com.svg" class="svg_photo" height="45">
+                    <input class="input_photo" id="input_photo"  type="file" multiple accept="image/jpeg,image/png" value="123">
+                </div>
+                
+                <div class="button-box">
+                    <button onclick="uploadServer()" >Отправить форму</button>
                 </div>
             </fieldset>
-            <div>
-              <button type="submit">Отправить</button>
-            </div>
         </form>
     </div>
+    <script src="file.js"></script>
 </body>
 </html>
